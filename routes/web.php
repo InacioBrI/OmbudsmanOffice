@@ -6,7 +6,7 @@ use App\Http\Controllers\ManifestacaoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('LandingPage.index');
+    return view('Home.index');
 })->name('home');
 
 Route::get('/registrar', [ManifestacaoController::class, 'create'])->name('manifestacoes.create');
