@@ -18,9 +18,13 @@ class UpdateManifestacaoRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var Manifestacao $manifestacao */
+        $manifestacao = $this->route('manifestacao');
+
         return [
-            'status' => ['required', Rule::in(array_keys(Manifestacao::STATUSES))],
+            'status' => ['required', Rule::in($manifestacao->statusPermitidos())],
             'resposta' => ['nullable', 'string'],
+            'observacao' => ['nullable', 'string', 'max:500'],
         ];
     }
 
@@ -31,7 +35,7 @@ class UpdateManifestacaoRequest extends FormRequest
     {
         return [
             'status.required' => 'Selecione um status.',
-            'status.in' => 'Status inválido.',
+            'status.in' => 'Transição de status inválida para o fluxo atual.',
         ];
     }
 }

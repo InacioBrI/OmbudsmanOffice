@@ -23,6 +23,7 @@ class ManifestacaoController extends Controller
         $dados['anexos'] = $this->salvarAnexos($request);
 
         $manifestacao = Manifestacao::create($dados);
+        $manifestacao->registrarHistorico(null, 'recebida', 'Manifestação registrada.');
 
         return redirect()
             ->route('manifestacoes.sucesso', $manifestacao->protocolo);
@@ -52,7 +53,7 @@ class ManifestacaoController extends Controller
     private function gerarProtocolo(): string
     {
         do {
-            $protocolo = 'OUV-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+            $protocolo = 'OUV-'.now()->format('Ymd').'-'.strtoupper(Str::random(6));
         } while (Manifestacao::where('protocolo', $protocolo)->exists());
 
         return $protocolo;

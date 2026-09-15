@@ -4,6 +4,9 @@
     $badges = [
         'recebida' => 'bg-slate-100 text-slate-700',
         'em_analise' => 'bg-amber-100 text-amber-700',
+        'encaminhada' => 'bg-blue-100 text-blue-700',
+        'aguardando_resposta' => 'bg-orange-100 text-orange-700',
+        'respondida' => 'bg-indigo-100 text-indigo-700',
         'concluida' => 'bg-emerald-100 text-emerald-700',
         'arquivada' => 'bg-slate-200 text-slate-600',
     ];

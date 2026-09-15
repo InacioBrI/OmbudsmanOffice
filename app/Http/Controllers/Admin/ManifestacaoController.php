@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateManifestacaoRequest;
 use App\Models\Manifestacao;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -47,6 +47,8 @@ class ManifestacaoController extends Controller
 
     public function show(Manifestacao $manifestacao): View
     {
+        $manifestacao->load('historicos');
+
         return view('Admin.manifestacoes.show', [
             'manifestacao' => $manifestacao,
             'titulo' => 'Detalhe da manifestação',
@@ -57,12 +59,21 @@ class ManifestacaoController extends Controller
     public function update(UpdateManifestacaoRequest $manifestacaoRequest, Manifestacao $manifestacao)
     {
         $dados = $manifestacaoRequest->validated();
+        $observacao = $dados['observacao'] ?? null;
+        unset($dados['observacao']);
 
-        if (! empty($dados['resposta'])) {
+        $statusAnterior = $manifestacao->status;
+        $statusMudou = $statusAnterior !== $dados['status'];
+
+        if (! empty($dados['resposta']) || in_array($dados['status'], ['respondida', 'concluida'], true)) {
             $dados['respondido_em'] = now();
         }
 
         $manifestacao->update($dados);
+
+        if ($statusMudou) {
+            $manifestacao->registrarHistorico($statusAnterior, $dados['status'], $observacao);
+        }
 
         return redirect()
             ->route('admin.manifestacoes.show', $manifestacao)
@@ -92,6 +103,8 @@ class ManifestacaoController extends Controller
                 $query->where(function (Builder $q) use ($busca) {
                     $q->where('nome', 'like', "%{$busca}%")
                         ->orWhere('protocolo', 'like', "%{$busca}%")
+                        ->orWhere('cpf', 'like', "%{$busca}%")
+                        ->orWhere('assunto', 'like', "%{$busca}%")
                         ->orWhere('descricao', 'like', "%{$busca}%");
                 });
             })

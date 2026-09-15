@@ -4,6 +4,9 @@
     $badges = [
         'recebida' => 'bg-slate-100 text-slate-700',
         'em_analise' => 'bg-amber-100 text-amber-700',
+        'encaminhada' => 'bg-blue-100 text-blue-700',
+        'aguardando_resposta' => 'bg-orange-100 text-orange-700',
+        'respondida' => 'bg-indigo-100 text-indigo-700',
         'concluida' => 'bg-emerald-100 text-emerald-700',
         'arquivada' => 'bg-slate-200 text-slate-600',
     ];
@@ -27,13 +30,32 @@
                 </span>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div><p class="text-xs uppercase tracking-wide text-slate-400">Tipo</p><p class="text-slate-700">{{ $manifestacao->tipo }}</p></div>
-                <div><p class="text-xs uppercase tracking-wide text-slate-400">Registrada em</p><p class="text-slate-700">{{ $manifestacao->created_at->format('d/m/Y H:i') }}</p></div>
-                <div><p class="text-xs uppercase tracking-wide text-slate-400">Nome</p><p class="text-slate-700">{{ $manifestacao->nome ?: 'Anônimo' }}</p></div>
-                <div><p class="text-xs uppercase tracking-wide text-slate-400">RM</p><p class="text-slate-700">{{ $manifestacao->rm ?: '—' }}</p></div>
-                <div><p class="text-xs uppercase tracking-wide text-slate-400">Telefone</p><p class="text-slate-700">{{ $manifestacao->telefone ?: '—' }}</p></div>
-                <div><p class="text-xs uppercase tracking-wide text-slate-400">Email</p><p class="text-slate-700">{{ $manifestacao->email ?: '—' }}</p></div>
+            <div>
+                <h3 class="text-sm font-semibold text-slate-700 mb-2">Manifestante</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Nome</p><p class="text-slate-700">{{ $manifestacao->nome ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">CPF</p><p class="text-slate-700">{{ $manifestacao->cpf ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">RM</p><p class="text-slate-700">{{ $manifestacao->rm ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Vínculo</p><p class="text-slate-700">{{ $manifestacao->vinculo ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Curso</p><p class="text-slate-700">{{ $manifestacao->curso ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Unidade</p><p class="text-slate-700">{{ $manifestacao->unidade ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Semestre</p><p class="text-slate-700">{{ $manifestacao->semestre ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Telefone</p><p class="text-slate-700">{{ $manifestacao->telefone ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">E-mail</p><p class="text-slate-700">{{ $manifestacao->email ?: '—' }}</p></div>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-100 pt-4">
+                <h3 class="text-sm font-semibold text-slate-700 mb-2">Manifestação</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Tipo</p><p class="text-slate-700">{{ $manifestacao->tipo }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Área envolvida</p><p class="text-slate-700">{{ $manifestacao->area_envolvida ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Assunto</p><p class="text-slate-700">{{ $manifestacao->assunto ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Registrada em</p><p class="text-slate-700">{{ $manifestacao->created_at->format('d/m/Y H:i') }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Data do ocorrido</p><p class="text-slate-700">{{ $manifestacao->data_ocorrido?->format('d/m/Y') ?: '—' }}</p></div>
+                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Local do ocorrido</p><p class="text-slate-700">{{ $manifestacao->local_ocorrido ?: '—' }}</p></div>
+                    <div class="col-span-2"><p class="text-xs uppercase tracking-wide text-slate-400">Pessoas envolvidas</p><p class="text-slate-700 whitespace-pre-line">{{ $manifestacao->pessoas_envolvidas ?: '—' }}</p></div>
+                </div>
             </div>
 
             <div>
@@ -70,11 +92,19 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-600 mb-1">Status</label>
                     <select name="status" class="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none">
-                        @foreach (\App\Models\Manifestacao::STATUSES as $valor => $label)
-                            <option value="{{ $valor }}" @selected($manifestacao->status === $valor)>{{ $label }}</option>
+                        @foreach ($manifestacao->statusPermitidos() as $valor)
+                            <option value="{{ $valor }}" @selected($manifestacao->status === $valor)>{{ \App\Models\Manifestacao::STATUSES[$valor] ?? $valor }}</option>
                         @endforeach
                     </select>
+                    <p class="mt-1 text-xs text-slate-400">O fluxo permite apenas avançar para o próximo estágio ou arquivar.</p>
                     @error('status') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Observação da alteração</label>
+                    <input type="text" name="observacao" maxlength="500" placeholder="Motivo ou nota interna (opcional)"
+                           class="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none">
+                    <p class="mt-1 text-xs text-slate-400">Registrada no histórico da manifestação.</p>
                 </div>
 
                 <div>
@@ -88,6 +118,31 @@
                     Salvar alterações
                 </button>
             </form>
+
+            {{-- Histórico de status --}}
+            <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+                <h2 class="font-semibold text-slate-800 mb-4">Histórico de status</h2>
+                <ol class="relative border-s border-slate-200 ps-4 space-y-5">
+                    @forelse ($manifestacao->historicos as $historico)
+                        <li class="relative">
+                            <span class="absolute -start-[22px] top-1 w-3 h-3 rounded-full bg-indigo-400 ring-4 ring-white"></span>
+                            <p class="text-sm text-slate-700">
+                                @if ($historico->de)
+                                    <span class="text-slate-400">{{ $historico->de_label }}</span>
+                                    <span class="text-slate-400">&rarr;</span>
+                                @endif
+                                <span class="font-medium">{{ $historico->para_label }}</span>
+                            </p>
+                            @if ($historico->observacao)
+                                <p class="mt-0.5 text-xs text-slate-500">{{ $historico->observacao }}</p>
+                            @endif
+                            <p class="mt-0.5 text-xs text-slate-400">{{ $historico->created_at->format('d/m/Y H:i') }}</p>
+                        </li>
+                    @empty
+                        <li class="text-sm text-slate-500">Nenhum registro de histórico.</li>
+                    @endforelse
+                </ol>
+            </div>
 
             <div class="bg-white rounded-lg border border-red-200 shadow-sm p-6" x-data="{ confirmar: false }">
                 <h2 class="font-semibold text-red-700">Excluir</h2>
