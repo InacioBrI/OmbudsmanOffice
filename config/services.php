@@ -35,4 +35,22 @@ return [
         ],
     ],
 
+    /*
+    | Integração com a RA API (Reclame AQUI).
+    | Enquanto as credenciais oficiais não chegam, 'enabled' deve ficar false:
+    | o container resolve o NullReclameAquiClient e nada é chamado externamente.
+    | TODO(reclame-aqui): ajustar base_url/endpoints e implementar OAuth2 real
+    | (client_id/client_secret) quando a documentação estiver disponível.
+    */
+    'reclame_aqui' => [
+        'enabled' => env('RECLAME_AQUI_ENABLED', false),
+        'base_url' => env('RECLAME_AQUI_BASE_URL'),
+        'token' => env('RECLAME_AQUI_TOKEN'),
+        'client_id' => env('RECLAME_AQUI_CLIENT_ID'),
+        'client_secret' => env('RECLAME_AQUI_CLIENT_SECRET'),
+        'timeout' => env('RECLAME_AQUI_TIMEOUT', 15),
+        'connect_timeout' => env('RECLAME_AQUI_CONNECT_TIMEOUT', 5),
+        'retry' => env('RECLAME_AQUI_RETRY', 2),
+    ],
+
 ];
