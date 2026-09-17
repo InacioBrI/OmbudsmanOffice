@@ -27,8 +27,8 @@
                 $itens = [
                     ['secao' => 'painel', 'label' => 'Painel Principal', 'rota' => 'admin.manifestacoes.index'],
                     ['secao' => 'atendimentos', 'label' => 'Atendimentos', 'rota' => 'admin.manifestacoes.atendimentos'],
-                    ['secao' => 'historico', 'label' => 'Histórico de manifestação', 'rota' => 'admin.manifestacoes.historico'],
                     ['secao' => 'reclame_aqui', 'label' => 'Reclame Aqui', 'rota' => 'admin.reclameAqui.index'],
+                    ['secao' => 'historico', 'label' => 'Histórico de manifestação', 'rota' => 'admin.manifestacoes.historico'],
                 ];
             @endphp
             @foreach ($itens as $item)
