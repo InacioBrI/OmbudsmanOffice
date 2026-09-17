@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ManifestacaoController as AdminManifestacaoController;
+use App\Http\Controllers\Admin\ReclameAquiController;
 use App\Http\Controllers\ManifestacaoController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/atendimentos', [AdminManifestacaoController::class, 'atendimentos'])->name('manifestacoes.atendimentos');
     Route::get('/historico', [AdminManifestacaoController::class, 'historico'])->name('manifestacoes.historico');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reclame-aqui', [ReclameAquiController::class, 'index'])->name('reclameAqui.index');
     Route::get('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'show'])->name('manifestacoes.show');
     Route::put('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'update'])->name('manifestacoes.update');
     Route::delete('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'destroy'])->name('manifestacoes.destroy');
