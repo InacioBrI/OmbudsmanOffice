@@ -10,11 +10,7 @@
         'concluida' => 'bg-emerald-100 text-emerald-700',
         'arquivada' => 'bg-slate-200 text-slate-600',
     ];
-    $rotaFiltro = match ($secao ?? 'painel') {
-        'atendimentos' => 'admin.manifestacoes.atendimentos',
-        'historico' => 'admin.manifestacoes.historico',
-        default => 'admin.manifestacoes.index',
-    };
+    $rotaFiltro = ($secao ?? '') === 'historico' ? 'admin.manifestacoes.historico' : 'admin.manifestacoes.index';
 @endphp
 
 @section('conteudo')
@@ -42,7 +38,12 @@
             <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1">Status</label>
                 <select name="status" class="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none">
-                    <option value="">Todos</option>
+                    @if (($secao ?? '') === 'manifestacoes')
+                        <option value="em_andamento" @selected(request('status', 'em_andamento') === 'em_andamento')>Em andamento</option>
+                        <option value="todos" @selected(request('status') === 'todos')>Todos</option>
+                    @else
+                        <option value="">Todos</option>
+                    @endif
                     @foreach (\App\Models\Manifestacao::STATUSES as $valor => $label)
                         <option value="{{ $valor }}" @selected(request('status') === $valor)>{{ $label }}</option>
                     @endforeach

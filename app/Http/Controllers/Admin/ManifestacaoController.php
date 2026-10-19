@@ -14,23 +14,15 @@ class ManifestacaoController extends Controller
 {
     public function index(Request $request): View
     {
-        $manifestacoes = $this->filtrar($request)->paginate(15)->withQueryString();
+        $manifestacoes = $this->filtrar($request)
+            ->when($request->input('status', 'em_andamento') === 'em_andamento', fn (Builder $q) => $q->emAndamento())
+            ->paginate(15)
+            ->withQueryString();
 
         return view('Admin.manifestacoes.index', [
             'manifestacoes' => $manifestacoes,
-            'titulo' => 'Painel principal',
-            'secao' => 'painel',
-        ]);
-    }
-
-    public function atendimentos(Request $request): View
-    {
-        $manifestacoes = $this->filtrar($request)->emAndamento()->paginate(15)->withQueryString();
-
-        return view('Admin.manifestacoes.index', [
-            'manifestacoes' => $manifestacoes,
-            'titulo' => 'Atendimentos',
-            'secao' => 'atendimentos',
+            'titulo' => 'Manifestações',
+            'secao' => 'manifestacoes',
         ]);
     }
 
@@ -52,7 +44,7 @@ class ManifestacaoController extends Controller
         return view('Admin.manifestacoes.show', [
             'manifestacao' => $manifestacao,
             'titulo' => 'Detalhe da manifestação',
-            'secao' => 'painel',
+            'secao' => 'manifestacoes',
         ]);
     }
 
@@ -109,7 +101,7 @@ class ManifestacaoController extends Controller
                 });
             })
             ->when($request->filled('categoria'), fn (Builder $q) => $q->where('tipo', $request->string('categoria')))
-            ->when($request->filled('status'), fn (Builder $q) => $q->where('status', $request->string('status')))
+            ->when(array_key_exists($request->string('status')->toString(), Manifestacao::STATUSES), fn (Builder $q) => $q->where('status', $request->string('status')->toString()))
             ->when($request->filled('data'), fn (Builder $q) => $q->whereDate('created_at', $request->date('data')))
             ->latest();
     }

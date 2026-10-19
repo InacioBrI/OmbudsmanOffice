@@ -25,8 +25,7 @@
             <p class="px-3 text-[11px] uppercase tracking-wide text-slate-400 mb-2">Seções</p>
             @php
                 $itens = [
-                    ['secao' => 'painel', 'label' => 'Painel Principal', 'rota' => 'admin.manifestacoes.index'],
-                    ['secao' => 'atendimentos', 'label' => 'Atendimentos', 'rota' => 'admin.manifestacoes.atendimentos'],
+                    ['secao' => 'manifestacoes', 'label' => 'Manifestações', 'rota' => 'admin.manifestacoes.index'],
                     ['secao' => 'reclame_aqui', 'label' => 'Reclame Aqui', 'rota' => 'admin.reclameAqui.index'],
                     ['secao' => 'historico', 'label' => 'Histórico de manifestação', 'rota' => 'admin.manifestacoes.historico'],
                 ];
