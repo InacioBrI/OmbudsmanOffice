@@ -41,14 +41,12 @@ class Manifestacao extends Model
     public const STATUSES = [
         'recebida' => 'Recebida',
         'em_analise' => 'Em análise',
-        'encaminhada' => 'Encaminhada',
-        'aguardando_resposta' => 'Aguardando resposta da área',
         'respondida' => 'Respondida',
         'concluida' => 'Concluída',
         'arquivada' => 'Arquivada',
     ];
 
-    public const EM_ANDAMENTO = ['recebida', 'em_analise', 'encaminhada', 'aguardando_resposta', 'respondida'];
+    public const EM_ANDAMENTO = ['recebida', 'em_analise', 'respondida'];
 
     public const ENCERRADAS = ['concluida', 'arquivada'];
 
@@ -59,9 +57,7 @@ class Manifestacao extends Model
      */
     public const TRANSICOES = [
         'recebida' => ['em_analise', 'arquivada'],
-        'em_analise' => ['encaminhada', 'arquivada'],
-        'encaminhada' => ['aguardando_resposta', 'arquivada'],
-        'aguardando_resposta' => ['respondida', 'arquivada'],
+        'em_analise' => ['respondida', 'arquivada'],
         'respondida' => ['concluida', 'arquivada'],
         'concluida' => ['arquivada'],
         'arquivada' => [],
@@ -70,6 +66,21 @@ class Manifestacao extends Model
     public const TIPOS = ['Reclamação', 'Sugestão', 'Denúncia', 'Elogio', 'Solicitação', 'Informação'];
 
     public const VINCULOS = ['Aluno', 'Ex-aluno', 'Professor', 'Colaborador', 'Responsável', 'Comunidade externa'];
+
+    /**
+     * Dados do solicitante que podem ser compartilhados com um setor no encaminhamento
+     * (CPF, telefone e e-mail nunca são compartilhados).
+     *
+     * @var array<string, string>
+     */
+    public const DADOS_COMPARTILHAVEIS = [
+        'nome' => 'Nome',
+        'rm' => 'RM',
+        'vinculo' => 'Vínculo',
+        'curso' => 'Curso',
+        'unidade' => 'Unidade',
+        'semestre' => 'Semestre',
+    ];
 
     protected function casts(): array
     {
@@ -83,6 +94,20 @@ class Manifestacao extends Model
     public function historicos(): HasMany
     {
         return $this->hasMany(ManifestacaoStatusHistorico::class)->latest();
+    }
+
+    /**
+     * Encaminhamentos internos entre setores. Uso exclusivo do painel administrativo:
+     * nunca deve ser carregado nas telas públicas.
+     */
+    public function encaminhamentos(): HasMany
+    {
+        return $this->hasMany(ManifestacaoEncaminhamento::class)->latest();
+    }
+
+    public function isEncerrada(): bool
+    {
+        return in_array($this->status, self::ENCERRADAS, true);
     }
 
     public function scopeEmAndamento(Builder $query): Builder
