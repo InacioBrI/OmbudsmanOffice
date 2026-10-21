@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateManifestacaoRequest;
 use App\Models\Manifestacao;
+use App\Models\ManifestacaoEncaminhamento;
+use App\Models\Setor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -39,10 +41,11 @@ class ManifestacaoController extends Controller
 
     public function show(Manifestacao $manifestacao): View
     {
-        $manifestacao->load('historicos');
+        $manifestacao->load('historicos', 'encaminhamentos.setorOrigem', 'encaminhamentos.setorDestino', 'encaminhamentos.mensagens');
 
         return view('Admin.manifestacoes.show', [
             'manifestacao' => $manifestacao,
+            'setores' => Setor::destinos()->orderBy('nome')->get(),
             'titulo' => 'Detalhe da manifestação',
             'secao' => 'manifestacoes',
         ]);
@@ -90,6 +93,7 @@ class ManifestacaoController extends Controller
     private function filtrar(Request $request): Builder
     {
         return Manifestacao::query()
+            ->withCount(['encaminhamentos as encaminhamentos_ativos_count' => fn (Builder $q) => $q->whereIn('status', ManifestacaoEncaminhamento::ATIVOS)])
             ->when($request->filled('busca'), function (Builder $query) use ($request) {
                 $busca = $request->string('busca');
                 $query->where(function (Builder $q) use ($busca) {
