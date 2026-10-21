@@ -4,8 +4,6 @@
     $badges = [
         'recebida' => 'bg-slate-100 text-slate-700',
         'em_analise' => 'bg-amber-100 text-amber-700',
-        'encaminhada' => 'bg-blue-100 text-blue-700',
-        'aguardando_resposta' => 'bg-orange-100 text-orange-700',
         'respondida' => 'bg-indigo-100 text-indigo-700',
         'concluida' => 'bg-emerald-100 text-emerald-700',
         'arquivada' => 'bg-slate-200 text-slate-600',
@@ -18,8 +16,9 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
         {{-- Dados --}}
-        <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-5">
+        <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-5">
             <div class="flex items-start justify-between">
                 <div>
                     <p class="text-xs uppercase tracking-wide text-slate-400">Protocolo</p>
@@ -81,8 +80,13 @@
             @endif
         </div>
 
+        @include('Admin.manifestacoes.partials._encaminhamentos')
+        </div>
+
         {{-- Ações --}}
         <div class="space-y-6">
+            @include('Admin.manifestacoes.partials._encaminhar')
+
             <form action="{{ route('admin.manifestacoes.update', $manifestacao) }}" method="POST"
                   class="bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-4">
                 @csrf
