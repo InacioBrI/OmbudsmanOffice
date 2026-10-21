@@ -4,8 +4,6 @@
     $badges = [
         'recebida' => 'bg-slate-100 text-slate-700',
         'em_analise' => 'bg-amber-100 text-amber-700',
-        'encaminhada' => 'bg-blue-100 text-blue-700',
-        'aguardando_resposta' => 'bg-orange-100 text-orange-700',
         'respondida' => 'bg-indigo-100 text-indigo-700',
         'concluida' => 'bg-emerald-100 text-emerald-700',
         'arquivada' => 'bg-slate-200 text-slate-600',
@@ -91,6 +89,11 @@
                                 <span class="text-xs font-medium px-3 py-1 rounded-full {{ $badges[$m->status] ?? 'bg-slate-100 text-slate-700' }}">
                                     {{ $m->status_label }}
                                 </span>
+                                @if ($m->encaminhamentos_ativos_count)
+                                    <span class="ml-1 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                                        Encaminhada a {{ $m->encaminhamentos_ativos_count }} {{ $m->encaminhamentos_ativos_count > 1 ? 'setores' : 'setor' }}
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-5 py-3">
                                 <div class="flex items-center justify-end gap-3">

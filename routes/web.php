@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EncaminhamentoController;
 use App\Http\Controllers\Admin\ManifestacaoController as AdminManifestacaoController;
+use App\Http\Controllers\Admin\MensagemInternaController;
 use App\Http\Controllers\Admin\ReclameAquiController;
 use App\Http\Controllers\ManifestacaoController;
 use Illuminate\Http\Request;
@@ -26,4 +28,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'show'])->name('manifestacoes.show');
     Route::put('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'update'])->name('manifestacoes.update');
     Route::delete('/manifestacoes/{manifestacao}', [AdminManifestacaoController::class, 'destroy'])->name('manifestacoes.destroy');
+
+    // Encaminhamento interno entre setores (nunca exposto nas rotas públicas).
+    Route::post('/manifestacoes/{manifestacao}/encaminhamentos', [EncaminhamentoController::class, 'store'])->name('encaminhamentos.store');
+    Route::patch('/encaminhamentos/{encaminhamento}/status', [EncaminhamentoController::class, 'status'])->name('encaminhamentos.status');
+    Route::post('/encaminhamentos/{encaminhamento}/mensagens', [MensagemInternaController::class, 'store'])->name('encaminhamentos.mensagens.store');
 });
