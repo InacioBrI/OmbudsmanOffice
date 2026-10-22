@@ -16,13 +16,15 @@
         },
         aceitarCompartilhamento() { this.compartilhar = true; this.confirmar = false; },
         recusarCompartilhamento() { this.compartilhar = false; this.confirmar = false; },
-     }">
+     }"
+     @keydown.escape.window="if (confirmar) recusarCompartilhamento(); else if (! enviando) aberto = false">
     <h2 class="font-semibold text-slate-800">Encaminhar para setor</h2>
     <p class="mt-1 text-xs text-slate-500">Direcione a manifestação ao setor responsável. O setor será notificado por e-mail. Informação interna, não visível ao solicitante.</p>
 
-    <button type="button" @click="aberto = true" @disabled(! $podeEncaminhar)
-            class="mt-3 w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2.5 rounded-md transition">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 12h14"/></svg>
+    <button type="button" @click="aberto = true" @disabled(! $podeEncaminhar) class="mt-3 w-full text-black flex items-center justify-center gap-2 bg-amber-100 cursor-pointer hover:bg-amber-200 disabled:bg-slate-300 disabled:cursor-not-allowed text-sm font-medium px-4 py-2.5 rounded-md transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 12h14"/>
+        </svg>
         Encaminhar manifestação
     </button>
     @if ($manifestacao->isEncerrada())
@@ -32,8 +34,8 @@
     @endif
 
     {{-- Modal de encaminhamento --}}
-    <div x-show="aberto" x-cloak class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
-        <div @click.outside="if (! confirmar && ! enviando) aberto = false" class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+    <div x-show="aberto" x-cloak @click.self="if (! confirmar && ! enviando) aberto = false" class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full p-6">
             <div class="flex items-start justify-between">
                 <div>
                     <h3 class="font-semibold text-slate-800">Encaminhar manifestação</h3>
@@ -86,7 +88,7 @@
 
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" @click="aberto = false" class="text-sm px-4 py-2 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50">Cancelar</button>
-                    <button type="submit" :disabled="enviando" class="text-sm px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white flex items-center gap-2">
+                    <button type="submit" :disabled="enviando" class="text-sm px-4 py-2 rounded-md bg-amber-100 hover:bg-amber-200 disabled:opacity-60 text-black flex items-center gap-2">
                         <svg x-show="enviando" x-cloak class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" class="opacity-25"/><path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"/></svg>
                         <span x-text="enviando ? 'Encaminhando…' : 'Encaminhar'"></span>
                     </button>
@@ -94,10 +96,11 @@
             </form>
         </div>
     </div>
+    
 
     {{-- Pop-up de confirmação do compartilhamento de dados --}}
     <div x-show="confirmar" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6" role="alertdialog" aria-modal="true">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6" role="alertdialog" aria-modal="true">
             <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-amber-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>

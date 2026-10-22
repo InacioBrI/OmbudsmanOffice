@@ -3,6 +3,7 @@
 ## Verificação
 - Testes: `php artisan test` (SQLite em memória, `MAIL_MAILER=array`, `QUEUE_CONNECTION=sync`).
 - Estilo: `vendor/bin/pint --dirty`.
+- Assets: o CSS servido é o build estático em `public/build` (Tailwind v4). Depois de usar classes Tailwind novas nas views, rode `npm run build` (ou mantenha `npm run dev` ativo), senão as classes não existem no CSS.
 
 ## Convenções
 - Banco local é MySQL: nomes de índices/FKs compostos devem ter no máximo 64 caracteres (defina nomes curtos explicitamente).
