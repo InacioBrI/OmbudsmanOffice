@@ -11,10 +11,6 @@
 <section class="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
     <div class="flex items-center justify-between gap-3">
         <h2 class="font-semibold text-slate-800">Encaminhamentos internos</h2>
-        <span class="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 bg-slate-100 px-2 py-1 rounded">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-            Visível apenas internamente
-        </span>
     </div>
 
     <div class="mt-4 space-y-5">
@@ -63,8 +59,7 @@
                                 @php
                                     $acao = match ($proximo) {
                                         'concluido' => ['Marcar como concluído', 'border-emerald-300 text-emerald-700 hover:bg-emerald-50', 'Confirmar que o setor concluiu sua parte do atendimento?'],
-                                        'cancelado' => ['Cancelar encaminhamento', 'border-red-300 text-red-600 hover:bg-red-50', 'Cancelar este encaminhamento? A conversa será mantida no histórico.'],
-                                        default => ['Reabrir', 'border-indigo-300 text-indigo-700 hover:bg-indigo-50', 'Reabrir este encaminhamento?'],
+                                        default => ['Cancelar encaminhamento', 'border-red-300 text-red-600 hover:bg-red-50', 'Cancelar este encaminhamento? A conversa será mantida no histórico.'],
                                     };
                                 @endphp
                                 <form action="{{ route('admin.encaminhamentos.status', $encaminhamento) }}" method="POST" onsubmit="return confirm(@js($acao[2]))">
@@ -120,7 +115,6 @@
                                     <span x-text="enviando ? 'Enviando…' : 'Enviar mensagem'">Enviar mensagem</span>
                                 </button>
                             </div>
-                            <p class="text-[11px] text-slate-400">Modo demonstração: as mensagens ficam registradas no sistema. A integração com o Microsoft Graph será implementada posteriormente.</p>
                         </form>
                     @endif
                 </div>

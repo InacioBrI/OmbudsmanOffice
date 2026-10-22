@@ -150,10 +150,23 @@ class EncaminhamentoTest extends TestCase
         $this->assertSame('concluido', $encaminhamento->fresh()->status);
         $this->assertSame('em_analise', $manifestacao->fresh()->status);
 
-        $this->patch(route('admin.encaminhamentos.status', $encaminhamento), ['status' => 'em_atendimento'])->assertSessionHas('sucesso');
-        $this->assertSame('em_atendimento', $encaminhamento->fresh()->status);
-
         $this->patch(route('admin.encaminhamentos.status', $encaminhamento), ['status' => 'pendente'])->assertSessionHas('erro');
+    }
+
+    public function test_encaminhamento_concluido_ou_cancelado_nao_pode_ser_reaberto(): void
+    {
+        $manifestacao = $this->manifestacao('em_analise');
+        $this->encaminhar($manifestacao);
+        $encaminhamento = ManifestacaoEncaminhamento::sole();
+
+        foreach (['concluido', 'cancelado'] as $final) {
+            $encaminhamento->update(['status' => $final]);
+
+            $this->patch(route('admin.encaminhamentos.status', $encaminhamento), ['status' => 'em_atendimento'])->assertSessionHas('erro');
+            $this->assertSame($final, $encaminhamento->fresh()->status);
+        }
+
+        $this->get(route('admin.manifestacoes.show', $manifestacao))->assertDontSee('Reabrir');
     }
 
     public function test_tela_de_detalhes_exibe_encaminhamento(): void

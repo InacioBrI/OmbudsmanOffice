@@ -39,8 +39,8 @@ class ManifestacaoEncaminhamento extends Model
     public const TRANSICOES = [
         'pendente' => ['em_atendimento', 'concluido', 'cancelado'],
         'em_atendimento' => ['concluido', 'cancelado'],
-        'concluido' => ['em_atendimento'],
-        'cancelado' => ['em_atendimento'],
+        'concluido' => [],
+        'cancelado' => [],
     ];
 
     protected function casts(): array
