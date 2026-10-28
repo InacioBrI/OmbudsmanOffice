@@ -32,15 +32,11 @@
             <div>
                 <h3 class="text-sm font-semibold text-slate-700 mb-2">Manifestante</h3>
                 <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Nome</p><p class="text-slate-700">{{ $manifestacao->nome ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">CPF</p><p class="text-slate-700">{{ $manifestacao->cpf ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">RM</p><p class="text-slate-700">{{ $manifestacao->rm ?: '—' }}</p></div>
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Vínculo</p><p class="text-slate-700">{{ $manifestacao->vinculo ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Curso</p><p class="text-slate-700">{{ $manifestacao->curso ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Unidade</p><p class="text-slate-700">{{ $manifestacao->unidade ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Semestre</p><p class="text-slate-700">{{ $manifestacao->semestre ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Telefone</p><p class="text-slate-700">{{ $manifestacao->telefone ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">E-mail</p><p class="text-slate-700">{{ $manifestacao->email ?: '—' }}</p></div>
+                    @foreach (\App\Models\Manifestacao::rotulosCampos($manifestacao->vinculo) as $campo => $rotulo)
+                        @continue(blank($manifestacao->{$campo}))
+                        <div><p class="text-xs uppercase tracking-wide text-slate-400">{{ $rotulo }}</p><p class="text-slate-700 break-words">{{ $manifestacao->{$campo} }}</p></div>
+                    @endforeach
                 </div>
             </div>
 
@@ -53,7 +49,7 @@
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Registrada em</p><p class="text-slate-700">{{ $manifestacao->created_at->format('d/m/Y H:i') }}</p></div>
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Data do ocorrido</p><p class="text-slate-700">{{ $manifestacao->data_ocorrido?->format('d/m/Y') ?: '—' }}</p></div>
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Local do ocorrido</p><p class="text-slate-700">{{ $manifestacao->local_ocorrido ?: '—' }}</p></div>
-                    <div class="col-span-2"><p class="text-xs uppercase tracking-wide text-slate-400">Pessoas envolvidas</p><p class="text-slate-700 whitespace-pre-line">{{ $manifestacao->pessoas_envolvidas ?: '—' }}</p></div>
+                    <div class="col-span-2"><p class="text-xs uppercase tracking-wide text-slate-400">Pessoas envolvidas</p><p class="text-slate-700 whitespace-pre-line">{{ $manifestacao->possui_pessoas_envolvidas === false ? 'Não' : ($manifestacao->pessoas_envolvidas ?: '—') }}</p></div>
                 </div>
             </div>
 

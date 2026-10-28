@@ -53,7 +53,9 @@ class ManifestacaoEncaminhadaNotification extends Notification implements Should
             $mensagem->line('**Dados do solicitante (compartilhados pela Ouvidoria):**');
 
             foreach (Manifestacao::DADOS_COMPARTILHAVEIS as $campo => $rotulo) {
-                $mensagem->line("{$rotulo}: ".($manifestacao->{$campo} ?: '—'));
+                if (filled($manifestacao->{$campo})) {
+                    $mensagem->line("{$rotulo}: {$manifestacao->{$campo}}");
+                }
             }
 
             $this->anexarArquivos($mensagem, $manifestacao);
