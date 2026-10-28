@@ -14,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder ativos()
  * @method static \Illuminate\Database\Eloquent\Builder destinos()
  */
-#[Fillable(['nome', 'email', 'is_ouvidoria', 'ativo'])]
+#[Fillable(['nome', 'responsavel_nome', 'email', 'is_ouvidoria', 'ativo'])]
 class Setor extends Model
 {
     /** @use HasFactory<SetorFactory> */

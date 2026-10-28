@@ -183,4 +183,15 @@ class EncaminhamentoTest extends TestCase
         $this->get(route('admin.manifestacoes.index'))
             ->assertSee('Encaminhada a 1 setor');
     }
+
+    public function test_modal_exibe_responsavel_do_departamento(): void
+    {
+        $this->secretaria->update(['responsavel_nome' => 'Joana Pereira', 'email' => 'joana@exemplo.edu.br']);
+
+        $this->get(route('admin.manifestacoes.show', $this->manifestacao()))
+            ->assertOk()
+            ->assertSeeInOrder(['Departamento de destino', 'Responsável pelo setor', 'Motivo do encaminhamento', 'Enviar dados do aluno ao setor'])
+            ->assertSee('Joana Pereira')
+            ->assertSee('joana@exemplo.edu.br');
+    }
 }

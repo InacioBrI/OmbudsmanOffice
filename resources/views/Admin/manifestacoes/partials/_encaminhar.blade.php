@@ -10,6 +10,9 @@
         compartilhar: {{ old('compartilhar_dados') ? 'true' : 'false' }},
         confirmar: false,
         enviando: false,
+        setorId: @js((string) old('setor_destino_id', '')),
+        responsaveis: @js($setores->mapWithKeys(fn ($setor) => [$setor->id => ['nome' => $setor->responsavel_nome, 'email' => $setor->email]])),
+        get responsavel() { return this.responsaveis[this.setorId] ?? null; },
         alternarCompartilhamento() {
             if (this.compartilhar) { this.compartilhar = false; return; }
             this.confirmar = true;
@@ -50,8 +53,8 @@
                 @csrf
 
                 <div>
-                    <label for="setor_destino_id" class="block text-sm font-medium text-slate-600 mb-1">Setor de destino</label>
-                    <select id="setor_destino_id" name="setor_destino_id" required class="{{ $campoClasse }}">
+                    <label for="setor_destino_id" class="block text-sm font-medium text-slate-600 mb-1">Departamento de destino</label>
+                    <select id="setor_destino_id" name="setor_destino_id" required x-model="setorId" class="{{ $campoClasse }}">
                         <option value="">Selecione…</option>
                         @foreach ($setores as $setor)
                             <option value="{{ $setor->id }}" @selected((int) old('setor_destino_id') === $setor->id)>{{ $setor->nome }}</option>
@@ -61,11 +64,27 @@
                 </div>
 
                 <div>
+                    <p class="block text-sm font-medium text-slate-600 mb-1">Responsável pelo setor</p>
+                    <div class="flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 px-4 py-3" aria-live="polite">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0"/></svg>
+                        </span>
+                        <template x-if="responsavel">
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-slate-700 truncate" x-text="responsavel.nome || 'Responsável não informado'"></p>
+                                <a :href="'mailto:' + responsavel.email" class="text-xs text-slate-500 hover:text-indigo-600 break-all" x-text="responsavel.email"></a>
+                            </div>
+                        </template>
+                        <p x-show="! responsavel" class="text-xs text-slate-400">Selecione um departamento para ver o responsável.</p>
+                    </div>
+                </div>
+
+                <div>
                     <label for="motivo" class="block text-sm font-medium text-slate-600 mb-1">Motivo do encaminhamento</label>
                     <textarea id="motivo" name="motivo" rows="4" required minlength="10" maxlength="2000"
                               placeholder="Explique ao setor o que precisa ser analisado ou respondido…"
                               class="{{ $campoClasse }} resize-y">{{ old('motivo') }}</textarea>
-                    <p class="mt-1 text-xs text-slate-400">Enviado ao setor por e-mail e registrado no histórico interno.</p>
+                    <p class="mt-1 text-xs text-slate-400">Enviado ao responsável por e-mail e registrado no histórico interno.</p>
                     @error('motivo', 'encaminhamento') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                 </div>
 
