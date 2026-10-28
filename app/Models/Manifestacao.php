@@ -84,7 +84,7 @@ class Manifestacao extends Model
         'Aluno' => ['nome', 'rm', 'cpf', 'curso', 'semestre', 'telefone', 'email', 'unidade'],
         'Ex-aluno' => ['nome', 'rm', 'cpf', 'curso', 'semestre', 'telefone', 'email', 'unidade'],
         'Professor' => ['nome', 'cpf', 'ra', 'curso', 'telefone', 'email'],
-        'Colaborador' => ['nome', 'cpf', 'ra', 'curso', 'telefone', 'email'],
+        'Colaborador' => ['nome', 'cpf', 'ra', 'telefone', 'email'],
         'Responsável' => ['nome', 'cpf', 'aluno_nome', 'curso', 'semestre', 'telefone', 'email'],
         'Comunidade externa' => ['nome', 'cpf', 'organizacao', 'email', 'telefone'],
     ];

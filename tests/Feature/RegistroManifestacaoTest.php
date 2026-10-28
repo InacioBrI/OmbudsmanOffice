@@ -46,7 +46,7 @@ class RegistroManifestacaoTest extends TestCase
             'aluno' => ['Aluno', ['nome' => 'Ana Aluna', 'rm' => '123456', 'cpf' => self::CPF_VALIDO, 'curso' => 'Direito', 'semestre' => '3º semestre', 'unidade' => 'Paraíso', ...$contato]],
             'ex-aluno' => ['Ex-aluno', ['nome' => 'Edu Ex', 'rm' => '654321', 'cpf' => self::CPF_VALIDO, 'curso' => 'Direito', 'semestre' => '10º semestre', 'unidade' => 'Vila Mariana', ...$contato]],
             'professor' => ['Professor', ['nome' => 'Paulo Prof', 'cpf' => self::CPF_VALIDO, 'ra' => '777', 'curso' => 'Medicina', ...$contato]],
-            'colaborador' => ['Colaborador', ['nome' => 'Carla Colab', 'cpf' => self::CPF_VALIDO, 'ra' => '888', 'curso' => 'Administração', ...$contato]],
+            'colaborador' => ['Colaborador', ['nome' => 'Carla Colab', 'cpf' => self::CPF_VALIDO, 'ra' => '888', ...$contato]],
             'responsavel' => ['Responsável', ['nome' => 'Rita Resp', 'cpf' => self::CPF_VALIDO, 'aluno_nome' => 'Rafael Filho', 'curso' => 'Nutrição', 'semestre' => '1º semestre', ...$contato]],
             'comunidade externa' => ['Comunidade externa', ['nome' => 'Org Rep', 'cpf' => self::CNPJ_VALIDO, 'organizacao' => 'Associação X', ...$contato]],
         ];
