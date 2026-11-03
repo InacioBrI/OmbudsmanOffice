@@ -37,10 +37,32 @@ class PrivacidadePublicaTest extends TestCase
 
         $this->get(route('manifestacoes.acompanhar', ['protocolo' => 'OUV-PUB-1']))
             ->assertOk()
-            ->assertSee('Em análise')
+            ->assertSee('Estamos analisando sua solicitação junto ao setor responsável')
             ->assertDontSee('SETOR-INTERNO-X')
             ->assertDontSee('MOTIVO-INTERNO-SIGILOSO')
             ->assertDontSee('MENSAGEM-INTERNA-SIGILOSA')
             ->assertDontSee('Encaminh');
+    }
+
+    public function test_acompanhamento_publico_exibe_apenas_protocolo_data_e_status(): void
+    {
+        $manifestacao = Manifestacao::create([
+            'protocolo' => 'OUV-PUB-2',
+            'tipo' => 'TIPO-SIGILOSO',
+            'descricao' => 'DESCRICAO-SIGILOSA',
+            'status' => 'respondida',
+            'resposta' => 'RESPOSTA-SIGILOSA',
+            'respondido_em' => now(),
+        ]);
+
+        $this->get(route('manifestacoes.acompanhar', ['protocolo' => 'OUV-PUB-2']))
+            ->assertOk()
+            ->assertSee('OUV-PUB-2')
+            ->assertSee('Resposta enviada por e-mail')
+            ->assertSee($manifestacao->created_at->format('d/m/Y H:i'))
+            ->assertDontSee('TIPO-SIGILOSO')
+            ->assertDontSee('DESCRICAO-SIGILOSA')
+            ->assertDontSee('RESPOSTA-SIGILOSA')
+            ->assertDontSee('Resposta da Ouvidoria');
     }
 }
