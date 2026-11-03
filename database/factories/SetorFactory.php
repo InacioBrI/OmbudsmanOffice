@@ -17,6 +17,7 @@ class SetorFactory extends Factory
     {
         return [
             'nome' => fake()->unique()->company(),
+            'responsavel_nome' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'is_ouvidoria' => false,
             'ativo' => true,

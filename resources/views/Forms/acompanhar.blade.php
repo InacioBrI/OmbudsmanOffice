@@ -3,12 +3,10 @@
 @section('titulo', 'Acompanhar manifestação - Ouvidoria BA')
 
 @php
-    $badges = [
-        'recebida' => 'bg-slate-100 text-slate-700',
-        'em_analise' => 'bg-amber-100 text-amber-700',
-        'respondida' => 'bg-indigo-100 text-indigo-700',
-        'concluida' => 'bg-emerald-100 text-emerald-700',
-        'arquivada' => 'bg-slate-200 text-slate-600',
+    $destaques = [
+        'recebida' => 'border-slate-200 bg-slate-50 text-slate-700',
+        'resposta' => 'border-indigo-200 bg-indigo-50 text-indigo-800',
+        'finalizada' => 'border-emerald-200 bg-emerald-50 text-emerald-800',
     ];
 @endphp
 
@@ -35,57 +33,61 @@
             @endif
 
             @if ($manifestacao)
-                <div class="mt-6 bg-white rounded-xl border border-slate-100 shadow-sm p-6 space-y-4">
-                    <div class="flex items-center justify-between">
+                <div class="mt-6 bg-white rounded-xl border border-slate-100 shadow-sm p-6 space-y-6">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
                         <div>
                             <p class="text-xs uppercase tracking-wide text-slate-400">Protocolo</p>
                             <p class="font-semibold text-slate-800">{{ $manifestacao->protocolo }}</p>
                         </div>
-                        <span class="text-xs font-medium px-3 py-1 rounded-full {{ $badges[$manifestacao->status] ?? 'bg-slate-100 text-slate-700' }}">
-                            {{ $manifestacao->status_label }}
-                        </span>
+                        <div class="text-right">
+                            <p class="text-xs uppercase tracking-wide text-slate-400">Registrada em</p>
+                            <p class="text-sm text-slate-700">{{ $manifestacao->created_at->format('d/m/Y H:i') }}</p>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="text-xs uppercase tracking-wide text-slate-400">Tipo</p>
-                            <p class="text-slate-700">{{ $manifestacao->tipo }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs uppercase tracking-wide text-slate-400">Registrada em</p>
-                            <p class="text-slate-700">{{ $manifestacao->created_at->format('d/m/Y H:i') }}</p>
-                        </div>
+                    <div class="rounded-lg border px-4 py-3 {{ $destaques[$acompanhamento['atual']] ?? 'border-amber-200 bg-amber-50 text-amber-800' }}">
+                        <p class="text-xs uppercase tracking-wide opacity-70">Situação atual</p>
+                        <p class="mt-1 font-semibold">{{ $acompanhamento['mensagem'] }}</p>
                     </div>
 
                     <div>
-                        <p class="text-xs uppercase tracking-wide text-slate-400">Descrição</p>
-                        <p class="text-sm text-slate-700 whitespace-pre-line">{{ $manifestacao->descricao }}</p>
+                        <p class="text-xs uppercase tracking-wide text-slate-400 mb-4">Etapas do atendimento</p>
+                        <ol>
+                            @foreach ($acompanhamento['etapas'] as $etapa)
+                                <li class="relative flex gap-4 {{ $loop->last ? '' : 'pb-6' }}">
+                                    @unless ($loop->last)
+                                        <span aria-hidden="true"
+                                              class="absolute left-4 top-9 bottom-0 w-0.5 -translate-x-1/2 {{ $etapa['estado'] === 'concluida' ? 'bg-emerald-400' : 'bg-slate-200' }}"></span>
+                                    @endunless
+
+                                    @if ($etapa['estado'] === 'concluida')
+                                        <span class="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </span>
+                                    @elseif ($etapa['estado'] === 'atual')
+                                        <span class="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500 ring-4 ring-amber-100">
+                                            <span class="h-2.5 w-2.5 rounded-full bg-white animate-pulse"></span>
+                                        </span>
+                                    @else
+                                        <span class="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-slate-200 bg-white text-xs font-semibold text-slate-400">
+                                            {{ $loop->iteration }}
+                                        </span>
+                                    @endif
+
+                                    <div class="pt-1">
+                                        <p class="text-sm font-medium {{ $etapa['estado'] === 'pendente' ? 'text-slate-400' : 'text-slate-800' }}">
+                                            {{ $etapa['titulo'] }}
+                                        </p>
+                                        @if ($etapa['estado'] !== 'pendente')
+                                            <p class="mt-0.5 text-xs text-slate-500">{{ $etapa['descricao'] }}</p>
+                                        @endif
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ol>
                     </div>
-
-                    @if ($manifestacao->resposta)
-                        <div class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3">
-                            <p class="text-xs uppercase tracking-wide text-emerald-600">Resposta da Ouvidoria</p>
-                            <p class="mt-1 text-sm text-slate-700 whitespace-pre-line">{{ $manifestacao->resposta }}</p>
-                            @if ($manifestacao->respondido_em)
-                                <p class="mt-2 text-xs text-slate-400">Respondido em {{ $manifestacao->respondido_em->format('d/m/Y H:i') }}</p>
-                            @endif
-                        </div>
-                    @endif
-
-                    @if ($manifestacao->historicos->isNotEmpty())
-                        <div>
-                            <p class="text-xs uppercase tracking-wide text-slate-400 mb-3">Acompanhamento</p>
-                            <ol class="relative border-s border-slate-200 ps-4 space-y-4">
-                                @foreach ($manifestacao->historicos as $historico)
-                                    <li class="relative">
-                                        <span class="absolute -start-[22px] top-1 w-3 h-3 rounded-full bg-amber-400 ring-4 ring-white"></span>
-                                        <p class="text-sm font-medium text-slate-700">{{ $historico->para_label }}</p>
-                                        <p class="mt-0.5 text-xs text-slate-400">{{ $historico->created_at->format('d/m/Y H:i') }}</p>
-                                    </li>
-                                @endforeach
-                            </ol>
-                        </div>
-                    @endif
                 </div>
             @endif
         </div>

@@ -9,4 +9,5 @@
 - Banco local é MySQL: nomes de índices/FKs compostos devem ter no máximo 64 caracteres (defina nomes curtos explicitamente).
 - Em `Rule::exists(...)->where()`, use `1`/`0` em colunas booleanas (não `true`/`false`).
 - Encaminhamento interno (setores, encaminhamentos, mensagens) é exclusivo do painel `/admin`; nunca carregar essas relações nas telas públicas (`/acompanhar`).
+- Tela pública `/acompanhar` exibe só protocolo, data e etapas. As etapas vêm de `App\Support\AcompanhamentoPublico`, que lê os encaminhamentos apenas de forma agregada (status) e só envia à view mensagens genéricas.
 - Pontos de integração futura: `App\Support\ResponsavelAtual` (SSO) e `ComunicacaoInternaInterface` (Microsoft Graph).

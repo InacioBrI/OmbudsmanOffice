@@ -97,6 +97,15 @@ class NotificacaoEncaminhamentoTest extends TestCase
         $this->assertSame('comprovante.pdf', $mail->rawAttachments[0]['name']);
     }
 
+    public function test_email_saudacao_usa_nome_do_responsavel(): void
+    {
+        $this->secretaria->update(['responsavel_nome' => 'Joana Pereira']);
+        $this->encaminhar(false);
+        [$html] = $this->renderizar();
+
+        $this->assertStringContainsString('Olá, Joana Pereira!', $html);
+    }
+
     public function test_envio_registra_data_do_email(): void
     {
         $this->encaminhar(false);

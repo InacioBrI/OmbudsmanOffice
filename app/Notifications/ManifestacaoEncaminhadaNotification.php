@@ -39,7 +39,7 @@ class ManifestacaoEncaminhadaNotification extends Notification implements Should
 
         $mensagem = (new MailMessage)
             ->subject("[Ouvidoria] Nova manifestação encaminhada – {$manifestacao->protocolo}")
-            ->greeting("Olá, equipe {$encaminhamento->setorDestino->nome}!")
+            ->greeting('Olá, '.($encaminhamento->setorDestino->responsavel_nome ?: "equipe {$encaminhamento->setorDestino->nome}").'!')
             ->line('Uma nova manifestação foi direcionada à sua equipe pela Ouvidoria.')
             ->line("**Protocolo:** {$manifestacao->protocolo}")
             ->line("**Tipo:** {$manifestacao->tipo}")
