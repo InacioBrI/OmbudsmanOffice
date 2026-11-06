@@ -4,8 +4,6 @@
     $badges = [
         'recebida' => 'bg-slate-100 text-slate-700',
         'em_analise' => 'bg-amber-100 text-amber-700',
-        'encaminhada' => 'bg-blue-100 text-blue-700',
-        'aguardando_resposta' => 'bg-orange-100 text-orange-700',
         'respondida' => 'bg-indigo-100 text-indigo-700',
         'concluida' => 'bg-emerald-100 text-emerald-700',
         'arquivada' => 'bg-slate-200 text-slate-600',
@@ -18,8 +16,9 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
         {{-- Dados --}}
-        <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-5">
+        <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-5">
             <div class="flex items-start justify-between">
                 <div>
                     <p class="text-xs uppercase tracking-wide text-slate-400">Protocolo</p>
@@ -33,15 +32,11 @@
             <div>
                 <h3 class="text-sm font-semibold text-slate-700 mb-2">Manifestante</h3>
                 <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Nome</p><p class="text-slate-700">{{ $manifestacao->nome ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">CPF</p><p class="text-slate-700">{{ $manifestacao->cpf ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">RM</p><p class="text-slate-700">{{ $manifestacao->rm ?: '—' }}</p></div>
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Vínculo</p><p class="text-slate-700">{{ $manifestacao->vinculo ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Curso</p><p class="text-slate-700">{{ $manifestacao->curso ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Unidade</p><p class="text-slate-700">{{ $manifestacao->unidade ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Semestre</p><p class="text-slate-700">{{ $manifestacao->semestre ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">Telefone</p><p class="text-slate-700">{{ $manifestacao->telefone ?: '—' }}</p></div>
-                    <div><p class="text-xs uppercase tracking-wide text-slate-400">E-mail</p><p class="text-slate-700">{{ $manifestacao->email ?: '—' }}</p></div>
+                    @foreach (\App\Models\Manifestacao::rotulosCampos($manifestacao->vinculo) as $campo => $rotulo)
+                        @continue(blank($manifestacao->{$campo}))
+                        <div><p class="text-xs uppercase tracking-wide text-slate-400">{{ $rotulo }}</p><p class="text-slate-700 break-words">{{ $manifestacao->{$campo} }}</p></div>
+                    @endforeach
                 </div>
             </div>
 
@@ -54,7 +49,7 @@
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Registrada em</p><p class="text-slate-700">{{ $manifestacao->created_at->format('d/m/Y H:i') }}</p></div>
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Data do ocorrido</p><p class="text-slate-700">{{ $manifestacao->data_ocorrido?->format('d/m/Y') ?: '—' }}</p></div>
                     <div><p class="text-xs uppercase tracking-wide text-slate-400">Local do ocorrido</p><p class="text-slate-700">{{ $manifestacao->local_ocorrido ?: '—' }}</p></div>
-                    <div class="col-span-2"><p class="text-xs uppercase tracking-wide text-slate-400">Pessoas envolvidas</p><p class="text-slate-700 whitespace-pre-line">{{ $manifestacao->pessoas_envolvidas ?: '—' }}</p></div>
+                    <div class="col-span-2"><p class="text-xs uppercase tracking-wide text-slate-400">Pessoas envolvidas</p><p class="text-slate-700 whitespace-pre-line">{{ $manifestacao->possui_pessoas_envolvidas === false ? 'Não' : ($manifestacao->pessoas_envolvidas ?: '—') }}</p></div>
                 </div>
             </div>
 
@@ -81,8 +76,13 @@
             @endif
         </div>
 
+        @include('Admin.manifestacoes.partials._encaminhamentos')
+        </div>
+
         {{-- Ações --}}
         <div class="space-y-6">
+            @include('Admin.manifestacoes.partials._encaminhar')
+
             <form action="{{ route('admin.manifestacoes.update', $manifestacao) }}" method="POST"
                   class="bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-4">
                 @csrf

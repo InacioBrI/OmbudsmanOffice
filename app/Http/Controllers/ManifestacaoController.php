@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreManifestacaoRequest;
 use App\Models\Manifestacao;
+use App\Support\AcompanhamentoPublico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -36,18 +37,22 @@ class ManifestacaoController extends Controller
         return view('Forms.sucesso', compact('manifestacao'));
     }
 
-    public function acompanhar(Request $request): View
+    public function acompanhar(Request $request, AcompanhamentoPublico $acompanhamentoPublico): View
     {
         $protocolo = $request->query('protocolo');
         $manifestacao = null;
+        $acompanhamento = null;
         $naoEncontrado = false;
 
         if ($protocolo) {
-            $manifestacao = Manifestacao::where('protocolo', $protocolo)->first();
+            $manifestacao = Manifestacao::select(['id', 'protocolo', 'status', 'respondido_em', 'created_at'])
+                ->where('protocolo', $protocolo)
+                ->first();
             $naoEncontrado = $manifestacao === null;
+            $acompanhamento = $manifestacao ? $acompanhamentoPublico->para($manifestacao) : null;
         }
 
-        return view('Forms.acompanhar', compact('manifestacao', 'protocolo', 'naoEncontrado'));
+        return view('Forms.acompanhar', compact('manifestacao', 'acompanhamento', 'protocolo', 'naoEncontrado'));
     }
 
     private function gerarProtocolo(): string
