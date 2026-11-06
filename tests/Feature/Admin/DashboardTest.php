@@ -16,16 +16,17 @@ class DashboardTest extends TestCase
         foreach (array_keys(Manifestacao::STATUSES) as $indice => $status) {
             $this->criarManifestacao("PROT-{$indice}", $status, Manifestacao::TIPOS[$indice % count(Manifestacao::TIPOS)]);
         }
+        $this->criarManifestacao('PROT-ULTIMO-TIPO', 'recebida', Manifestacao::TIPOS[5]);
 
         $response = $this->get(route('admin.dashboard'))
             ->assertOk()
-            ->assertViewHas('total', 7)
-            ->assertViewHas('emAndamento', 5)
+            ->assertViewHas('total', 6)
+            ->assertViewHas('emAndamento', 4)
             ->assertViewHas('encerradas', 2);
 
         $response->assertViewHas('porStatus', function ($contagens) {
             foreach (array_keys(Manifestacao::STATUSES) as $status) {
-                if ($contagens[$status] !== 1) {
+                if ($contagens[$status] !== ($status === 'recebida' ? 2 : 1)) {
                     return false;
                 }
             }
@@ -35,12 +36,12 @@ class DashboardTest extends TestCase
 
         $response->assertViewHas('porCategoria', function ($contagens) {
             foreach (Manifestacao::TIPOS as $tipo) {
-                if (! isset($contagens[$tipo])) {
+                if (($contagens[$tipo] ?? 0) !== 1) {
                     return false;
                 }
             }
 
-            return $contagens[Manifestacao::TIPOS[0]] === 2;
+            return true;
         });
 
         $response->assertSee('Resumo por status')->assertSee('Manifestações por categoria');

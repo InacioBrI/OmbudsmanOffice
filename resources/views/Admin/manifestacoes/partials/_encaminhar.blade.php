@@ -115,7 +115,7 @@
             </form>
         </div>
     </div>
-    
+
 
     {{-- Pop-up de confirmação do compartilhamento de dados --}}
     <div x-show="confirmar" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">

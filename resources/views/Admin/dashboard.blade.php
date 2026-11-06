@@ -4,8 +4,6 @@
     $coresStatus = [
         'recebida' => ['classe' => 'bg-slate-500', 'hex' => '#64748b'],
         'em_analise' => ['classe' => 'bg-amber-500', 'hex' => '#f59e0b'],
-        'encaminhada' => ['classe' => 'bg-sky-500', 'hex' => '#0ea5e9'],
-        'aguardando_resposta' => ['classe' => 'bg-orange-500', 'hex' => '#f97316'],
         'respondida' => ['classe' => 'bg-indigo-500', 'hex' => '#6366f1'],
         'concluida' => ['classe' => 'bg-emerald-500', 'hex' => '#10b981'],
         'arquivada' => ['classe' => 'bg-slate-800', 'hex' => '#1e293b'],
@@ -17,7 +15,7 @@
         'status' => [
             'labels' => array_values($status),
             'values' => array_map(fn ($chave) => (int) ($porStatus[$chave] ?? 0), array_keys($status)),
-            'colors' => array_column($coresStatus, 'hex'),
+            'colors' => array_map(fn ($chave) => $coresStatus[$chave]['hex'], array_keys($status)),
         ],
         'categorias' => [
             'labels' => $tipos,

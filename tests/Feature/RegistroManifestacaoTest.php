@@ -82,7 +82,7 @@ class RegistroManifestacaoTest extends TestCase
     }
 
     #[DataProvider('identificacaoPorVinculo')]
-    public function test_campos_do_vinculo_sao_obrigatorios(string $vinculo): void
+    public function test_campos_do_vinculo_sao_obrigatorios(string $vinculo, array $identificacao): void
     {
         $this->post(route('manifestacoes.store'), $this->dadosManifestacao(['vinculo' => $vinculo]))
             ->assertSessionHasErrors(Manifestacao::CAMPOS_POR_VINCULO[$vinculo]);
